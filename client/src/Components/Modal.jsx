@@ -4,19 +4,34 @@ import { IoMdClose } from "react-icons/io";
 import { FaPoll } from "react-icons/fa";
 import { toggleOpen } from "../Store/openModal";
 import { useDispatch } from "react-redux";
+import axios from "axios";
 // eslint-disable-next-line react/prop-types
 const Modal = ({ isOpen }) => {
   const [showModal, setShowModal] = useState(isOpen);
+  const imageURL = "";
+  const email = "sanskar@gmail.com";
 
   const dispatch = useDispatch();
   useEffect(() => {
     setShowModal(isOpen);
   }, [isOpen]);
-
+  const [message, SetMssg] = useState("");
   const handleClose = useCallback(() => {
     dispatch(toggleOpen());
     setShowModal(false);
   }, []);
+  const handleSubmit = async () => {
+    const tweetData = {
+      email: email,
+      Tweets: {
+        message: message,
+        imageURL: imageURL,
+      },
+    };
+    await axios.post("http://localhost:5000/", tweetData).then((response) => {
+      console.log(response.data);
+    });
+  };
 
   if (!isOpen) {
     return null;
@@ -54,7 +69,6 @@ const Modal = ({ isOpen }) => {
             md:h-auto
             "
         >
-          {/*content*/}
           <div
             className={`
               translate
@@ -119,6 +133,9 @@ const Modal = ({ isOpen }) => {
               </div>
 
               <textarea
+                onChange={(e) => {
+                  SetMssg(e.target.value);
+                }}
                 className="bg-transparent  p-4 h-64 rounded-b-lg resize-none text-gray-400 focus-visible:text-white    bg-gray-700  focus-visible:outline-none outline-none border-none   font-medium text-lg w-full"
                 placeholder="What's happening?"
               ></textarea>
@@ -145,6 +162,9 @@ const Modal = ({ isOpen }) => {
                 </div>
                 <div className="flex">
                   <button
+                    onClick={() => {
+                      handleSubmit();
+                    }}
                     type="button"
                     className="px-10 text-center py-1 font-semibold transition-all delay-75 hover:bg-sky-500 hover:text-gray-200 rounded-full dark:bg-gray-600 dark:text-gray-100"
                   >
